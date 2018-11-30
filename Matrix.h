@@ -18,7 +18,8 @@ public:
 
     // public methods
     const void print();
-    const double& determinant(const Matrix& x);
+    void LUDecomposition(Matrix& M, Matrix& L, Matrix& U);
+    const double& determinant(const Matrix& M);
 
     const Matrix& operator+(const Matrix& x);
     const Matrix& operator-(const Matrix& x);

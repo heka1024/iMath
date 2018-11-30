@@ -40,9 +40,41 @@ const void Matrix::print() {
     }
 }
 
+void Matrix::LUDecomposition(Matrix& M, Matrix& L, Matrix& U) {
+    int n = M.rows;
+    double sum = 0;
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            L.elem[i][j] = 0;
+            U.elem[i][j] = 0;
+        }
+    }
+
+    for(int i = 0; i < n; i++) {
+        for(int k = i; k < n; k++) {
+            sum = 0;
+            for(int j = 0; j < i; j++) {
+                sum += L.elem[i][j] * U.elem[j][k];
+            }
+            U.elem[i][k] = M.elem[i][k] - sum;
+        }
+        for(int k = i; k < n; k++) {
+            if(i == k) {
+                L.elem[i][i] = 1;
+            } else {
+                sum = 0;
+                for(int j = 0; j < i; j++) {
+                    sum += L.elem[k][j] * U.elem[j][i];
+                }
+                L.elem[k][i] = (M.elem[k][i] - sum) / U.elem[i][i];
+            }
+        }
+    }
+}
+
 const double& determinant(const Matrix& M) {
     if(M.rows != M.cols) {
-        std::cout << "ERROR: determinant should square matrix\n";
+        std::cout << "ERROR: Matrix should be square matrix to calculate determinant\n";
         exit(1);
     }
     // implementations
