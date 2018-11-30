@@ -1,5 +1,5 @@
 #ifndef __iVECTOR__H
-#define ___iVECTOR__H
+#define __iVECTOR__H
 #include <iostream>
 
 class Vector {
@@ -9,6 +9,7 @@ public:
 
     // Constructors
     Vector() : size(0), elem(nullptr) {};
+    Vector(int len);
     Vector(double *values, int len);
 
     // Desctructor

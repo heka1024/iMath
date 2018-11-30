@@ -2,6 +2,11 @@
 #include <cmath>
 #include <iostream>
 
+Vector::Vector(int len) {
+    this->size = len;
+    this->elem = new double[len];
+}
+
 Vector::Vector(double *values, int len) {
     this->size = len;
     this->elem = new double[len];
