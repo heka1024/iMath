@@ -44,7 +44,7 @@ const Vector& Vector::operator+(const Vector &x) {
     for(int i = 0; pnew->size > i; i++) {
         pnew->elem[i] = x.elem[i] + this->elem[i];
     }
-    pnew->print();
+
     return *pnew;
 }
 
@@ -56,4 +56,34 @@ const Vector& Vector::operator*(const Vector &other) {
     crossP->elem[2] = (this->elem[0] * other.elem[1]) - (this->elem[1] * other.elem[0]);
 
     return *crossP;
+}
+
+double& Vector::operator[](int n) {
+    if (n >= this->size) {
+        std::cout << "ERROR: Out of Bound\n";
+        exit(1);
+    }
+
+    return this->elem[n];
+}
+
+
+const double& Vector::operator[](int n) const {
+    if (n >= this->size) {
+        std::cout << "ERROR: Out of Bound\n";
+        exit(1);
+    }
+
+    return this->elem[n];
+}
+
+std::ostream& operator<<(std::ostream& os, Vector& v)
+{
+    os << '[';
+    for (int i = 0; i < v.size - 1; i++) {
+        os << v[i] << ", ";
+    }
+
+    os << v[v.size - 1] << ']';
+    return os;
 }
