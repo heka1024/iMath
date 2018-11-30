@@ -10,6 +10,7 @@ public:
 
     // Constructors
     Matrix() : rows(0), cols(0), elem(nullptr) {};
+    Matrix(int squareSize);
     Matrix(int rows, int cols);
     Matrix(Vector row[], int rows);
     Matrix(double **values, int rows, int cols);
@@ -19,8 +20,9 @@ public:
 
     // public methods
     const void print();
-    void LUDecomposition(Matrix& M, Matrix& L, Matrix& U);
-    const double& determinant(const Matrix& M);
+    void LUDecomposition(Matrix& L, Matrix& U);
+    double determinant();
+    bool isSingular();
 
     const Matrix& operator+(const Matrix& x);
     const Matrix& operator-(const Matrix& x);

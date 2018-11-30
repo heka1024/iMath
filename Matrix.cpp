@@ -12,18 +12,26 @@ Matrix::Matrix(int rows, int cols) {
     }
 }
 
-Matrix::Matrix(Vector row[], int rows) {
-    int cols = row[0].size;
+Matrix::Matrix(int squareSize) {
+    this->rows = squareSize;
+    this->cols = squareSize;
+    this->elem = new double*[this->rows];
+    for(int i = 0; i < this->cols; i++) {
+        this->elem[i] = new double[this->cols];
+    }
+}
 
-    this->elem = new double*[rows];
-    for(int i = 0; i < rows; i++) {
-        this->elem[i] = new double[cols];
-        for(int j = 0; j < cols; j++) {
+Matrix::Matrix(Vector row[], int rows) {
+    this->rows = rows;
+    this->cols = row[0].size;
+
+    this->elem = new double*[this->rows];
+    for(int i = 0; i < this->rows; i++) {
+        this->elem[i] = new double[this->cols];
+        for(int j = 0; j < this->cols; j++) {
             this->elem[i][j] = row[i].elem[j];
         }
     }
-    this->rows = rows;
-    this->cols = rows;
 }
 
 Matrix::Matrix(double **values, int rows, int cols) {
@@ -54,8 +62,8 @@ const void Matrix::print() {
     }
 }
 
-void Matrix::LUDecomposition(Matrix& M, Matrix& L, Matrix& U) {
-    int n = M.rows;
+void Matrix::LUDecomposition(Matrix& L, Matrix& U) {
+    int n = this->rows;
     double sum = 0;
     for(int i = 0; i < n; i++) {
         for(int j = 0; j < n; j++) {
@@ -70,7 +78,7 @@ void Matrix::LUDecomposition(Matrix& M, Matrix& L, Matrix& U) {
             for(int j = 0; j < i; j++) {
                 sum += L.elem[i][j] * U.elem[j][k];
             }
-            U.elem[i][k] = M.elem[i][k] - sum;
+            U.elem[i][k] = this->elem[i][k] - sum;
         }
         for(int k = i; k < n; k++) {
             if(i == k) {
@@ -80,18 +88,31 @@ void Matrix::LUDecomposition(Matrix& M, Matrix& L, Matrix& U) {
                 for(int j = 0; j < i; j++) {
                     sum += L.elem[k][j] * U.elem[j][i];
                 }
-                L.elem[k][i] = (M.elem[k][i] - sum) / U.elem[i][i];
+                L.elem[k][i] = (this->elem[k][i] - sum) / U.elem[i][i];
             }
         }
     }
 }
 
-const double& determinant(const Matrix& M) {
-    if(M.rows != M.cols) {
+double Matrix::determinant() {
+    if(this->rows != this->cols) {
         std::cout << "ERROR: Matrix should be square matrix to calculate determinant\n";
         exit(1);
     }
-    // implementations
+    Matrix *pnew = this;
+    Matrix L(3);
+    Matrix U(3);
+    pnew->LUDecomposition(L, U);
+    double detLower = 1, detUpper = 1;
+    for(int i = 0; i < this->rows; i++) {
+        detLower *= L.elem[i][i];
+        detUpper *= U.elem[i][i];
+    }
+    return detLower * detUpper;
+}
+
+bool Matrix::isSingular() {
+    return (this->determinant() == 0);
 }
 
 const Matrix& Matrix::operator+(const Matrix& x) {
