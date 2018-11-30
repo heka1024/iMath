@@ -40,6 +40,14 @@ const void Matrix::print() {
     }
 }
 
+const double& determinant(const Matrix& M) {
+    if(M.rows != M.cols) {
+        std::cout << "ERROR: determinant should square matrix\n";
+        exit(1);
+    }
+    // implementations
+}
+
 const Matrix& Matrix::operator+(const Matrix& x) {
     Matrix *pnew = new Matrix(this->rows, this->cols);
 

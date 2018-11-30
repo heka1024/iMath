@@ -18,10 +18,11 @@ public:
 
     // public methods
     const void print();
+    const double& determinant(const Matrix& x);
 
-    const Matrix& operator+(const Matrix &x);
-    const Matrix& operator-(const Matrix &x);
-    const Matrix& operator*(const Matrix &other);
+    const Matrix& operator+(const Matrix& x);
+    const Matrix& operator-(const Matrix& x);
+    const Matrix& operator*(const Matrix& other);
     Vector& operator[](int n);
     const Vector& operator[](int n) const;
 };
