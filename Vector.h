@@ -10,6 +10,7 @@ public:
     // Constructors
     Vector() : size(0), elem(nullptr) {};
     Vector(int len);
+    Vector(std::initializer_list<double> elem);
     Vector(double *values, int len);
 
     // Desctructor

@@ -12,6 +12,20 @@ Matrix::Matrix(int rows, int cols) {
     }
 }
 
+Matrix::Matrix(Vector row[], int rows) {
+    int cols = row[0].size;
+
+    this->elem = new double*[rows];
+    for(int i = 0; i < rows; i++) {
+        this->elem[i] = new double[cols];
+        for(int j = 0; j < cols; j++) {
+            this->elem[i][j] = row[i].elem[j];
+        }
+    }
+    this->rows = rows;
+    this->cols = rows;
+}
+
 Matrix::Matrix(double **values, int rows, int cols) {
     this->rows = rows;
     this->cols = cols;

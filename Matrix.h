@@ -11,6 +11,7 @@ public:
     // Constructors
     Matrix() : rows(0), cols(0), elem(nullptr) {};
     Matrix(int rows, int cols);
+    Matrix(Vector row[], int rows);
     Matrix(double **values, int rows, int cols);
 
     // Desctructor

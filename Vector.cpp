@@ -1,5 +1,6 @@
 #include "Vector.h"
 #include <cmath>
+#include <stdlib.h>
 #include <iostream>
 
 Vector::Vector(int len) {
@@ -7,11 +8,21 @@ Vector::Vector(int len) {
     this->elem = new double[len];
 }
 
+Vector::Vector(std::initializer_list<double> elem) {
+    this->size = elem.size();
+    this->elem = new double[this->size];
+    int cnt = 0;
+    for (auto i : elem) {
+        this->elem[cnt] = i;
+        cnt++;
+    }
+}
+
 Vector::Vector(double *values, int len) {
     this->size = len;
     this->elem = new double[len];
     for(int i = 0; len > i; i++) {
-        elem[i] = values[i];
+        this->elem[i] = values[i];
     }
 }
 
