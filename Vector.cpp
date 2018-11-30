@@ -37,6 +37,17 @@ double Vector::dotP(const Vector &x, const Vector &y) {
     }
 }
 
+const Vector& Vector::operator-(const Vector &x) {
+    Vector *pnew = new Vector(new double[x.size], x.size);
+
+
+    for(int i = 0; pnew->size > i; i++) {
+        pnew->elem[i] = this->elem[i] - x.elem[i];
+    }
+
+    return *pnew;
+}
+
 const Vector& Vector::operator+(const Vector &x) {
     Vector *pnew = new Vector(new double[x.size], x.size);
 
@@ -59,7 +70,7 @@ const Vector& Vector::operator*(const Vector &other) {
 }
 
 double& Vector::operator[](int n) {
-    if (n >= this->size) {
+    if (n >= this->size || n < 0) {
         std::cout << "ERROR: Out of Bound\n";
         exit(1);
     }
@@ -69,7 +80,7 @@ double& Vector::operator[](int n) {
 
 
 const double& Vector::operator[](int n) const {
-    if (n >= this->size) {
+    if (n >= this->size || n < 0) {
         std::cout << "ERROR: Out of Bound\n";
         exit(1);
     }
@@ -77,8 +88,7 @@ const double& Vector::operator[](int n) const {
     return this->elem[n];
 }
 
-std::ostream& operator<<(std::ostream& os, Vector& v)
-{
+std::ostream& operator<<(std::ostream& os, Vector& v) {
     os << '[';
     for (int i = 0; i < v.size - 1; i++) {
         os << v[i] << ", ";

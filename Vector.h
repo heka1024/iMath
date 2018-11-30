@@ -20,6 +20,7 @@ public:
 
     Vector* crossP(Vector x, Vector y);
     const Vector& operator+(const Vector &x);
+    const Vector& operator-(const Vector &x);
     const Vector& operator*(const Vector &other);
     double& operator[](int n);
     const double& operator[](int n) const;
