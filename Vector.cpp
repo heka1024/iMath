@@ -53,6 +53,26 @@ double Vector::dotP(const Vector &x, const Vector &y) {
     }
 }
 
+int Vector::maxElemIdx() {
+    int maxIdx = 0;
+    for(int i = 0; i < this->size; i++) {
+        if (this->elem[i] > this->elem[maxIdx]) {
+            maxIdx = i;
+        }
+    }
+    return maxIdx;
+}
+
+int Vector::minElemIdx() {
+    int minIdx = 0;
+    for(int i = 0; i < this->size; i++) {
+        if (this->elem[i] < this->elem[minIdx]) {
+            minIdx = i;
+        }
+    }
+    return minIdx;
+}
+
 const Vector& Vector::operator-(const Vector &x) {
     Vector *pnew = new Vector(new double[x.size], x.size);
 

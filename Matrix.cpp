@@ -7,7 +7,7 @@ Matrix::Matrix(int rows, int cols) {
     this->rows = rows;
     this->cols = cols;
     this->elem = new double*[this->rows];
-    for(int i = 0; i < this->cols; i++) {
+    for(int i = 0; i < this->rows; i++) {
         this->elem[i] = new double[this->cols];
     }
 }
@@ -58,11 +58,16 @@ const void Matrix::print() {
         for(int j = 0; j < this->cols - 1; j++) {
             std::cout << this->elem[i][j] << ", ";
         }
-        std::cout << this->elem[i][this->cols - 1];
+        std::cout << this->elem[i][this->cols - 1] << '\n';
     }
 }
 
 void Matrix::LUDecomposition(Matrix& L, Matrix& U) {
+    if(this->rows != this->cols) {
+        std::cout << "ERROR: LU ecomposition is valid for square matrix.\n";
+        exit(1);
+    }
+
     int n = this->rows;
     double sum = 0;
     for(int i = 0; i < n; i++) {
@@ -94,6 +99,60 @@ void Matrix::LUDecomposition(Matrix& L, Matrix& U) {
     }
 }
 
+
+Matrix& Matrix::pivoting(Matrix& P) {
+    if(P.rows != P.cols) {
+        std::cout << "ERROR: P must be square Matrix.\n";
+        exit(1);
+    } else {
+        for(int i = 0; i < P.rows; i++) {
+            for(int j = 0; j < P.cols; j++) {
+                P.elem[i][j] = (i == j) ? 1 : 0;
+            }
+        }
+    }
+
+    Matrix *pnew = this;
+    int pivot = 0;
+    for(int i = 0; i < this->cols; i++) {
+        pivot = i;
+        for(int j = i; j < this->rows; j++) {
+            if(this->elem[pivot][i] < this->elem[j][i]) {
+                pivot = j;
+            }
+        }
+        // row exchange
+        Vector swapRow(this->elem[pivot], this->cols);
+        Vector swapP(P.elem[pivot], this->cols);
+        for(int k = 0; k < this->cols; k++) {
+            pnew->elem[pivot][k] = pnew->elem[i][k];
+            pnew->elem[i][k] = swapRow.elem[k];
+            P.elem[pivot][k] = P.elem[i][k];
+            P.elem[i][k] = swapP.elem[k];
+        }
+    }
+
+    return *pnew;
+}
+
+Matrix& Matrix::pivoting() {
+    Matrix P(this->rows, this->cols);
+    Matrix *pnew = new Matrix(this->rows, this->cols);
+    *pnew = this->pivoting(P);
+    return *pnew;
+}
+
+void Matrix::LUDecomposition(Matrix& L, Matrix& U, Matrix& P){
+    if(this->rows != this->cols) {
+        std::cout << "ERROR: PLU ecomposition is valid for square matrix.\n";
+        exit(1);
+    }
+    Matrix *PA = new Matrix(this->rows);
+    *PA = this->pivoting(P);
+    PA->LUDecomposition(L, U);
+}
+
+
 double Matrix::determinant() {
     if(this->rows != this->cols) {
         std::cout << "ERROR: Matrix should be square matrix to calculate determinant\n";
@@ -113,6 +172,17 @@ double Matrix::determinant() {
 
 bool Matrix::isSingular() {
     return (this->determinant() == 0);
+}
+
+Matrix& Matrix::transpose() {
+    Matrix *trans = new Matrix(this->cols, this->rows);
+
+    for(int i = 0; i < this->rows; i++) {
+        for(int j = 0; j < this->cols; j++) {
+            trans->elem[j][i] = this->elem[i][j];
+        }
+    }
+    return *trans;
 }
 
 const Matrix& Matrix::operator+(const Matrix& x) {

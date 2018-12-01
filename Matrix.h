@@ -20,9 +20,14 @@ public:
 
     // public methods
     const void print();
+    Matrix& pivoting(Matrix& P);
+    Matrix& pivoting();
     void LUDecomposition(Matrix& L, Matrix& U);
+    void LUDecomposition(Matrix& P, Matrix& L, Matrix& U);
     double determinant();
     bool isSingular();
+    Matrix& transpose();
+    Vector& solve(const Vector& b);
 
     const Matrix& operator+(const Matrix& x);
     const Matrix& operator-(const Matrix& x);

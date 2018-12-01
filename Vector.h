@@ -18,6 +18,8 @@ public:
 
     // public methods
     const void print();
+    int maxElemIdx();
+    int minElemIdx();
     double dotP(const Vector &x, const Vector &y);
 
     Vector* crossP(Vector x, Vector y);
