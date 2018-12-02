@@ -6,6 +6,9 @@
 Vector::Vector(int len) {
     this->size = len;
     this->elem = new double[len];
+    for(int i = 0; i < len; i++) {
+        this->elem[i] = 0;
+    }
 }
 
 Vector::Vector(std::initializer_list<double> elem) {
@@ -31,7 +34,7 @@ Vector::~Vector() {
 }
 
 const void Vector::print() {
-    std::cout << "size :: " << this->size;
+    std::cout << "size :: " << this->size << ", elem :: ";
     std::cout << "[";
 
     for(int i = 0; i < this->size - 1; i++) {

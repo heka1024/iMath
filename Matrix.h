@@ -27,11 +27,12 @@ public:
     double determinant();
     bool isSingular();
     Matrix& transpose();
-    Vector& solve(const Vector& b);
+    Vector& solve(Vector& colVec);
 
     const Matrix& operator+(const Matrix& x);
     const Matrix& operator-(const Matrix& x);
     const Matrix& operator*(const Matrix& other);
+    Vector& operator*(const Vector& rhs);
     Vector& operator[](int n);
     const Vector& operator[](int n) const;
 };

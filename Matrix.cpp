@@ -99,7 +99,6 @@ void Matrix::LUDecomposition(Matrix& L, Matrix& U) {
     }
 }
 
-
 Matrix& Matrix::pivoting(Matrix& P) {
     if(P.rows != P.cols) {
         std::cout << "ERROR: P must be square Matrix.\n";
@@ -113,22 +112,30 @@ Matrix& Matrix::pivoting(Matrix& P) {
     }
 
     Matrix *pnew = this;
-    int pivot = 0;
-    for(int i = 0; i < this->cols; i++) {
-        pivot = i;
-        for(int j = i; j < this->rows; j++) {
-            if(this->elem[pivot][i] < this->elem[j][i]) {
-                pivot = j;
+    
+    int n = this->cols, imax = 0;
+    double maxA = 0, absA = 0;
+    double *tmp = 0, *tmpP = 0;
+    for(int i = 0; i < n; i++) {
+        maxA = 0;
+        imax = i;
+        for(int k = i; k < n; k++) {
+            if((absA = std::abs(this->elem[k][i])) >= maxA) {
+                maxA = absA;
+                imax = k;
             }
         }
-        // row exchange
-        Vector swapRow(this->elem[pivot], this->cols);
-        Vector swapP(P.elem[pivot], this->cols);
-        for(int k = 0; k < this->cols; k++) {
-            pnew->elem[pivot][k] = pnew->elem[i][k];
-            pnew->elem[i][k] = swapRow.elem[k];
-            P.elem[pivot][k] = P.elem[i][k];
-            P.elem[i][k] = swapP.elem[k];
+
+        if(imax != i) {
+            // swap
+            tmp = pnew->elem[i];
+            pnew->elem[i] = pnew->elem[imax];
+            pnew->elem[imax] = tmp;
+
+            // swap P
+            tmpP = P.elem[i];
+            P.elem[i] = P.elem[imax];
+            P.elem[imax] = tmpP;
         }
     }
 
@@ -183,6 +190,61 @@ Matrix& Matrix::transpose() {
         }
     }
     return *trans;
+}
+
+Vector& Matrix::operator*(const Vector& rhs) {
+    /***** rhs is regarded as column vector! *****/
+    if(this->cols != rhs.size) {
+        std::cout << "ERROR: cols of matrix and size of vector does not match.\n";
+        exit(1);
+    }
+
+    Vector *ans = new Vector(rhs.size);
+    double elem = 0;
+    for(int i = 0; i < this->rows; i++) {
+        elem = 0;
+        for(int j = 0; j < this->cols; j++) {
+            elem += this->elem[i][j] * rhs[j];
+        }
+        ans->elem[i] = elem;
+    }
+    return *ans;
+}
+
+Vector& Matrix::solve(Vector& colVec) {
+    if(this->rows != this->cols) {
+        std::cout << "ERROR: To sovle eq., Matrix must be sqaure matrix.\n";
+        exit(1);
+    }
+    int size = this->rows;
+
+    Matrix P(size);
+    Matrix PA = this->pivoting(P);
+
+    Matrix L(size);
+    Matrix U(size);
+    PA.LUDecomposition(L, U);
+
+    Vector b = P * colVec;
+    Vector z(size);
+    Vector x(size);
+
+    for(int i = 0; i < size; i++) {
+        double sum = 0;
+        for(int j = 0; j < i; j++) {
+            sum += L[i][j] * z[j];
+        }
+        z[i] = (b[i] - sum) / L[i][i];
+    }
+    // z.print();
+    for(int i = size - 1; i >= 0; i--) {
+        double sum = 0;
+        for(int j = size - 1; j >= i; j--) {
+            sum += U[i][j] * x[j];
+        }
+        x[i] = (z[i] - sum) / U[i][i];
+    }
+    return *(new Vector(x.elem, x.size));
 }
 
 const Matrix& Matrix::operator+(const Matrix& x) {
