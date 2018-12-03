@@ -238,6 +238,10 @@ Vector& Matrix::solve(Vector& colVec) {
         std::cout << "ERROR: To sovle eq., Matrix must be sqaure matrix.\n";
         exit(1);
     }
+    if(this->determinant() == 0) {
+        std::cout << "ERROR: Matrix is singular." << '\n';
+        exit(1);
+    }
     int size = this->rows;
 
     Matrix P(size);
@@ -365,6 +369,7 @@ Matrix& Matrix::inverse() {
         ans[i] = U.solve(L.solve(unit));
     }
     Matrix *pnew = new Matrix(ans, n);
+    *pnew = pnew->transpose();
 
     return *pnew;
 }
