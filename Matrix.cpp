@@ -3,6 +3,19 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+Matrix::Matrix(const Matrix& origin) {
+    this->cols = origin.cols;
+    this->rows = origin.rows;
+
+    this->elem = new double*[this->rows];
+    for(int i = 0; i < this->rows; i++) {
+        this->elem[i] = new double[this->cols];
+        for(int j = 0; j < this->cols; j++) {
+            this->elem[i][j] = origin[i][j];
+        }
+    }
+}
+
 Matrix::Matrix(int rows, int cols) {
     this->rows = rows;
     this->cols = cols;
@@ -55,10 +68,8 @@ Matrix::~Matrix() {
 const void Matrix::print() {
     std::cout << rows << " * " << cols << " Matrix\n";
     for(int i = 0; i < this->rows; i++) {
-        for(int j = 0; j < this->cols - 1; j++) {
-            std::cout << this->elem[i][j] << ", ";
-        }
-        std::cout << this->elem[i][this->cols - 1] << '\n';
+        Vector tmp(this->elem[i], this->cols);
+        std::cout << tmp << '\n';
     }
 }
 
@@ -98,6 +109,11 @@ void Matrix::LUDecomposition(Matrix& L, Matrix& U) {
         }
     }
 }
+void rowSwap(double *arr1, double *arr2) {
+    double *tmp = arr2;
+    arr2 = arr1;
+    arr1 = tmp;
+}
 
 Matrix& Matrix::pivoting(Matrix& P) {
     if(P.rows != P.cols) {
@@ -111,26 +127,26 @@ Matrix& Matrix::pivoting(Matrix& P) {
         }
     }
 
-    Matrix *pnew = this;
-    
+    Matrix pivotted = *this;
+    int cnt = 0;
     int n = this->cols, imax = 0;
-    double maxA = 0, absA = 0;
+    double maxA = 0;
     double *tmp = 0, *tmpP = 0;
     for(int i = 0; i < n; i++) {
         maxA = 0;
         imax = i;
         for(int k = i; k < n; k++) {
-            if((absA = std::abs(this->elem[k][i])) >= maxA) {
-                maxA = absA;
+            if(std::abs(pivotted.elem[k][i]) > maxA) {
+                maxA = std::abs(pivotted.elem[k][i]);
                 imax = k;
             }
         }
 
         if(imax != i) {
             // swap
-            tmp = pnew->elem[i];
-            pnew->elem[i] = pnew->elem[imax];
-            pnew->elem[imax] = tmp;
+            tmp = pivotted.elem[i];
+            pivotted.elem[i] = pivotted.elem[imax];
+            pivotted.elem[imax] = tmp;
 
             // swap P
             tmpP = P.elem[i];
@@ -138,15 +154,19 @@ Matrix& Matrix::pivoting(Matrix& P) {
             P.elem[imax] = tmpP;
         }
     }
+    Matrix *pnew = new Matrix(pivotted);
 
     return *pnew;
 }
 
 Matrix& Matrix::pivoting() {
     Matrix P(this->rows, this->cols);
+    /*
     Matrix *pnew = new Matrix(this->rows, this->cols);
     *pnew = this->pivoting(P);
-    return *pnew;
+    */
+
+    return this->pivoting(P);
 }
 
 void Matrix::LUDecomposition(Matrix& L, Matrix& U, Matrix& P){
@@ -168,13 +188,15 @@ double Matrix::determinant() {
     Matrix *pnew = this;
     Matrix L(3);
     Matrix U(3);
-    pnew->LUDecomposition(L, U);
-    double detLower = 1, detUpper = 1;
+    Matrix P(3);
+    pnew->LUDecomposition(L, U, P);
+    double detLower = 1, detUpper = 1, detP = 1;
     for(int i = 0; i < this->rows; i++) {
         detLower *= L.elem[i][i];
         detUpper *= U.elem[i][i];
+        detP *= P.elem[i][i];
     }
-    return detLower * detUpper;
+    return detLower * detUpper * detP;
 }
 
 bool Matrix::isSingular() {
@@ -319,10 +341,30 @@ const Vector& Matrix::operator[](int n) const {
 std::ostream& operator<<(std::ostream& os, Matrix& M) {
     int i, j;
     for(int i = 0; i < M.rows; i++) {
-        for(int j = 0; j < M.cols - 1; j++) {
-            os << M.elem[i][j] << ", ";
-        }
-        os << M.elem[i][M.cols - 1] << '\n';
+        Vector vnew(M.elem[i], M.cols);
+        os << vnew << "\n";
     }
     return os;
+}
+
+Matrix& Matrix::inverse() {
+    if(this->cols != this->rows) {
+        std::cout << "ERROR: Matrix must be square to get inverse." << '\n';
+        exit(1);
+    }
+    int n = this->cols;
+    Vector *ans = new Vector[n];
+    Vector unit(n);
+    Vector z(n);
+    Matrix L(n);
+    Matrix U(n);
+    Matrix P(n);
+    this->LUDecomposition(L, U, P);
+    for(int i = 0; i < n; i++) {
+        unit.elem = P.elem[i];
+        ans[i] = U.solve(L.solve(unit));
+    }
+    Matrix *pnew = new Matrix(ans, n);
+
+    return *pnew;
 }

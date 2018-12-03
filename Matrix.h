@@ -9,6 +9,7 @@ public:
     int rows, cols;
 
     // Constructors
+    Matrix(const Matrix& origin);
     Matrix() : rows(0), cols(0), elem(nullptr) {};
     Matrix(int squareSize);
     Matrix(int rows, int cols);
@@ -27,6 +28,7 @@ public:
     double determinant();
     bool isSingular();
     Matrix& transpose();
+    Matrix& inverse();
     Vector& solve(Vector& colVec);
 
     const Matrix& operator+(const Matrix& x);
