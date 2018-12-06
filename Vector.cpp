@@ -2,6 +2,8 @@
 #include <cmath>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
+using namespace std;
 
 Vector::Vector(int len) {
     this->size = len;
@@ -75,6 +77,10 @@ int Vector::minElemIdx() {
     }
     return minIdx;
 }
+double Vector::operator*(const Vector &other) {
+    return 1.0;
+}
+
 
 const Vector& Vector::operator-(const Vector &x) {
     Vector *pnew = new Vector(new double[x.size], x.size);
@@ -98,7 +104,7 @@ const Vector& Vector::operator+(const Vector &x) {
     return *pnew;
 }
 
-const Vector& Vector::operator*(const Vector &other) {
+const Vector& Vector::operator^(const Vector &other) {
     Vector *crossP = new Vector(new double[this->size], this->size);
 
     crossP->elem[0] = (this->elem[1] * other.elem[2]) - (this->elem[2] * other.elem[1]);
@@ -125,6 +131,15 @@ const double& Vector::operator[](int n) const {
     }
 
     return this->elem[n];
+}
+std::ostream& operator<<(std::ostream& os, const Vector& v) {
+    os << '[';
+    for (int i = 0; i < v.size - 1; i++) {
+        os << v[i] << ", ";
+    }
+
+    os << v[v.size - 1] << ']';
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os, Vector& v) {

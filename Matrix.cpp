@@ -351,6 +351,15 @@ std::ostream& operator<<(std::ostream& os, Matrix& M) {
     return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const Matrix& M) {
+    int i, j;
+    for(int i = 0; i < M.rows; i++) {
+        Vector vnew(M.elem[i], M.cols);
+        os << vnew << "\n";
+    }
+    return os;
+}
+
 Matrix& Matrix::inverse() {
     if(this->cols != this->rows) {
         std::cout << "ERROR: Matrix must be square to get inverse." << '\n';

@@ -25,10 +25,12 @@ public:
     Vector* crossP(Vector x, Vector y);
     const Vector& operator+(const Vector &x);
     const Vector& operator-(const Vector &x);
-    const Vector& operator*(const Vector &other);
+    const Vector& operator^(const Vector &other);
+    double operator*(const Vector &other);
     double& operator[](int n);
     const double& operator[](int n) const;
 };
 
 std::ostream& operator<<(std::ostream& os, Vector& v);
+std::ostream& operator<<(std::ostream& os, const Vector& v) ;
 #endif

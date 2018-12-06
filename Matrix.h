@@ -38,5 +38,6 @@ public:
     Vector& operator[](int n);
     const Vector& operator[](int n) const;
 };
+std::ostream& operator<<(std::ostream& os, const Matrix& M);
 std::ostream& operator<<(std::ostream& os, Matrix& M);
 #endif
