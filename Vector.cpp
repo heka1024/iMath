@@ -120,31 +120,3 @@ const Vector& Vector::operator^(const Vector &other) {
 
     return *ans;
 }
-
-/*
-
-
-
-
-
-
-std::ostream& operator<<(std::ostream& os, const Vector& v) {
-    os << '[';
-    for (int i = 0; i < v.size - 1; i++) {
-        os << v[i] << ", ";
-    }
-
-    os << v[v.size - 1] << ']';
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, Vector& v) {
-    os << '[';
-    for (int i = 0; i < v.size - 1; i++) {
-        os << v[i] << ", ";
-    }
-
-    os << v[v.size - 1] << ']';
-    return os;
-}
-*/
