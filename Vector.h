@@ -1,30 +1,25 @@
 #ifndef __iVECTOR__H
 #define __iVECTOR__H
 #include <iostream>
+#include <vector>
 
 class Vector {
 public:
-    int size;
-    double *elem;
+    std::vector<double> elem;
 
     // Constructors
-    Vector() : size(0), elem(nullptr) {};
-    Vector(int len);
-    Vector(std::initializer_list<double> elem);
+    Vector() : elem(0) {};
+    Vector(std::initializer_list<double> l);
     Vector(double *values, int len);
 
     // Desctructor
     ~Vector();
 
-    // public methods
-    const void print();
-    int maxElemIdx();
-    int minElemIdx();
-    double dotP(const Vector &x, const Vector &y);
-
+    size_t size();
+    const size_t size() const;
     Vector* crossP(Vector x, Vector y);
-    const Vector& operator+(const Vector &x);
-    const Vector& operator-(const Vector &x);
+    Vector& operator+(const Vector &x);
+    Vector& operator-(const Vector &x);
     const Vector& operator^(const Vector &other);
     double operator*(const Vector &other);
     double& operator[](int n);
