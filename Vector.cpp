@@ -11,6 +11,10 @@ Vector::Vector(std::initializer_list<double> l) {
     }
 }
 
+Vector::Vector(int len) {
+    this->elem.assign(len, 0);
+}
+
 Vector::Vector(double *values, int len) {
     for(int i = 0; len > i; i++) {
         this->elem.push_back(values[i]);
@@ -108,7 +112,7 @@ Vector& Vector::operator-(const Vector &other) {
     return *ans;
 }
 
-const Vector& Vector::operator^(const Vector &other) {
+Vector& Vector::operator^(const Vector &other) {
     if(this->size() != 3 || other.size() != 3) {
         std::cout << "ERROR: Vector size mismatch" << '\n';
         exit(1);
@@ -117,6 +121,26 @@ const Vector& Vector::operator^(const Vector &other) {
     ans->elem.push_back((*this)[1] * other[2] - (*this)[2] * other[1]);
     ans->elem.push_back((*this)[2] * other[0] - (*this)[0] * other[2]);
     ans->elem.push_back((*this)[0] * other[1] - (*this)[1] * other[0]);
+
+    return *ans;
+}
+
+Vector& operator*(const int& mult, Vector& v) {
+    Vector *ans = new Vector;
+
+    for(auto i : v.elem) {
+        ans->elem.push_back(mult * i);
+    }
+
+    return *ans;
+}
+
+Vector& operator*(const double& mult, Vector& v) {
+    Vector *ans = new Vector;
+
+    for(auto i : v.elem) {
+        ans->elem.push_back(mult * i);
+    }
 
     return *ans;
 }

@@ -1,23 +1,21 @@
 #ifndef __MATRIX__H
 #define __MATRIX__H
 #include <iostream>
+#include <vector>
 #include "Vector.h"
 
 class Matrix {
 public:
-    double **elem;
+    std::vector<Vector> elem;
     int rows, cols;
 
     // Constructors
-    Matrix(const Matrix& origin);
-    Matrix() : rows(0), cols(0), elem(nullptr) {};
-    Matrix(int squareSize);
+    Matrix() : rows(0), cols(0) {};
     Matrix(int rows, int cols);
-    Matrix(Vector row[], int rows);
-    Matrix(double **values, int rows, int cols);
-
+    Matrix(std::initializer_list<Vector> l);
+    Matrix(const Matrix& origin);
     // Desctructor
-    ~Matrix();
+    // ~Matrix();
 
     // public methods
     const void print();
@@ -31,9 +29,9 @@ public:
     Matrix& inverse();
     Vector& solve(Vector& colVec);
 
-    const Matrix& operator+(const Matrix& x);
-    const Matrix& operator-(const Matrix& x);
-    const Matrix& operator*(const Matrix& other);
+    Matrix& operator+(const Matrix& x);
+    Matrix& operator-(const Matrix& x);
+    Matrix& operator*(Matrix& other);
     Vector& operator*(const Vector& rhs);
     Vector& operator[](int n);
     const Vector& operator[](int n) const;
