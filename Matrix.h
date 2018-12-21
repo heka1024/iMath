@@ -7,10 +7,9 @@
 class Matrix {
 public:
     std::vector<Vector> elem;
-    int rows, cols;
 
     // Constructors
-    Matrix() : rows(0), cols(0) {};
+    Matrix() : elem(0) {}
     Matrix(int rows, int cols);
     Matrix(std::initializer_list<Vector> l);
     Matrix(const Matrix& origin);
@@ -18,7 +17,10 @@ public:
     // ~Matrix();
 
     // public methods
-    const void print();
+    double rows() { return elem.size(); }
+    const double rows() const { return elem.size(); };
+    double cols() { return elem[0].size(); }
+    const double cols() const { return elem[0].size(); };
     Matrix& pivoting(Matrix& P);
     double determinant();
     bool isSingular();
@@ -26,14 +28,15 @@ public:
     Matrix& inverse();
     Vector& solve(Vector& colVec);
 
-    Matrix& operator+(const Matrix& x);
-    Matrix& operator-(const Matrix& x);
+    Matrix& operator+(Matrix& other);
+    Matrix& operator-(Matrix& other);
     Matrix& operator*(Matrix& other);
     Vector& operator*(const Vector& rhs);
     Vector& operator[](int n);
     const Vector& operator[](int n) const;
 };
-Matrix& operator*(const Matrix& m, const double& factor);
+Matrix& operator*(const int& factor, const Matrix& m);
+Matrix& operator*(const double& factor, const Matrix& m);
 std::ostream& operator<<(std::ostream& os, const Matrix& M);
 std::ostream& operator<<(std::ostream& os, Matrix& M);
 #endif

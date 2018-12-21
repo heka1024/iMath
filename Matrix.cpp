@@ -6,8 +6,6 @@
 #include "Matrix.h"
 
 Matrix::Matrix(int rows, int cols) {
-    this->rows = rows;
-    this->cols = cols;
     for (size_t i = 0; i < rows; i++) {
         this->elem.push_back(Vector(cols));
     }
@@ -16,13 +14,11 @@ Matrix::Matrix(int rows, int cols) {
 Matrix::Matrix(std::initializer_list<Vector> l) {
     for(auto x : l) {
         this->elem.push_back(x);
-        this->cols = x.size();
     }
-    this->rows = l.size();
 }
 
 Vector& Matrix::operator[](int n) {
-    if (n >= this->rows || n < 0) {
+    if (n >= this->rows() || n < 0) {
         std::cout << "ERROR: Out of Bound\n";
         exit(1);
     }
@@ -30,8 +26,8 @@ Vector& Matrix::operator[](int n) {
     return this->elem[n];
 }
 
-const Vector& Matrix::operator[](int n) const {
-    if (n >= this->rows || n < 0) {
+const Vector& Matrix::operator[](const int n) const {
+    if (n >= this->rows() || n < 0) {
         std::cout << "ERROR: Out of Bound\n";
         exit(1);
     }
@@ -49,21 +45,19 @@ std::ostream& operator<<(std::ostream& os, Matrix& M) {
 
 
 Matrix::Matrix(const Matrix& origin) {
-    this->cols = origin.cols;
-    this->rows = origin.rows;
-    for (int i = 0; i < this->rows; i++) {
+    for (int i = 0; i < origin.rows(); i++) {
         this->elem.push_back(origin[i]);
     }
 }
 
-Matrix& Matrix::operator+(const Matrix& other) {
-    if((this->rows != other.rows) || (this->cols != other.cols)) {
+Matrix& Matrix::operator+(Matrix& other) {
+    if((this->rows() != other.rows()) || (this->cols() != other.cols())) {
         std::cout << "ERROR: Matrix size mismatch" << '\n';
         exit(1);
     }
 
     Matrix *pnew = new Matrix;
-    for (size_t i = 0; i < this->rows; i++) {
+    for (size_t i = 0; i < this->rows(); i++) {
         Vector add = (*this)[i] + other[i];
         pnew->elem.push_back(add);
     }
@@ -71,14 +65,14 @@ Matrix& Matrix::operator+(const Matrix& other) {
     return *pnew;
 }
 
-Matrix& Matrix::operator-(const Matrix& other) {
-    if((this->rows != other.rows) || (this->cols != other.cols)) {
+Matrix& Matrix::operator-(Matrix& other) {
+    if((this->rows() != other.rows()) || (this->cols() != other.cols())) {
         std::cout << "ERROR: Matrix size mismatch" << '\n';
         exit(1);
     }
 
     Matrix *pnew = new Matrix;
-    for (size_t i = 0; i < this->rows; i++) {
+    for (size_t i = 0; i < this->rows(); i++) {
         Vector sub = (*this)[i] - other[i];
         pnew->elem.push_back(sub);
     }
@@ -87,7 +81,7 @@ Matrix& Matrix::operator-(const Matrix& other) {
 }
 
 Vector& Matrix::operator*(const Vector& rhs) {
-    if(this->cols != rhs.size()) {
+    if(this->cols() != rhs.size()) {
         std::cout << "ERROR: cols of matrix and size of vector does not match.\n";
         exit(1);
     }
@@ -103,10 +97,10 @@ Vector& Matrix::operator*(const Vector& rhs) {
 }
 
 Matrix& Matrix::transpose() {
-    Matrix *trans = new Matrix(this->cols, this->rows);
+    Matrix *trans = new Matrix(this->cols(), this->rows());
 
-    for(int i = 0; i < this->rows; i++) {
-        for(int j = 0; j < this->cols; j++) {
+    for(int i = 0; i < this->rows(); i++) {
+        for(int j = 0; j < this->cols(); j++) {
             (*trans)[j][i] = (*this)[i][j];
         }
     }
@@ -114,7 +108,7 @@ Matrix& Matrix::transpose() {
 }
 
 Matrix& Matrix::operator*(Matrix& other) {
-    if(this->cols != other.rows) {
+    if(this->cols() != other.rows()) {
         std::cout << "ERROR: Matrix mult error. Please check size of matrix.\n";
         exit(1);
     }
@@ -142,7 +136,15 @@ void swap(Vector& a, Vector& b) {
 }
 
 Vector& Matrix::solve(Vector& colVec) {
-    size_t n = this->cols;
+    if (this->cols() != this->rows()) {
+        std::cout << "ERROR: Matrix is not sqaure";
+        exit(1);
+    } else if (this->cols() != colVec.size()) {
+        std::cout << "ERROR: Matrix and Vector size does not match.";
+        exit(1);
+    }
+
+    size_t n = this->cols();
     Matrix A = (*this);
     Vector b = colVec;
     for (size_t k = 0; k < n; k++) {
@@ -152,6 +154,7 @@ Vector& Matrix::solve(Vector& colVec) {
                 m = j;
             }
         }
+        
         if(A[m][k] == 0) {
             std::cout << "ERROR: No unique solutions" << '\n';
         } else {
@@ -180,19 +183,25 @@ Vector& Matrix::solve(Vector& colVec) {
 
 Matrix& Matrix::inverse() {
     Matrix inv;
-    size_t n = this->cols;
+    size_t n = this->cols();
     for (size_t i = 0; i < n; i++) {
         Vector e(n); e[i] = 1;
         Vector tmp = this->solve(e);
         inv.elem.push_back(tmp);
     }
-    inv.cols = n; inv.rows = n;
     Matrix *pnew = new Matrix(inv.transpose());
     return *pnew;
 }
 
+Matrix& operator*(const int& factor, const Matrix& m) {
+    Matrix *pnew = new Matrix();
+    for(auto x : m.elem) {
+        pnew->elem.push_back(factor * x);
+    }
+    return *pnew;
+}
 
-Matrix& operator*(const Matrix& m, const double& factor) {
+Matrix& operator*(const double& factor, const Matrix& m) {
     Matrix *pnew = new Matrix();
     for(auto x : m.elem) {
         pnew->elem.push_back(factor * x);
