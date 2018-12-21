@@ -20,9 +20,6 @@ public:
     // public methods
     const void print();
     Matrix& pivoting(Matrix& P);
-    Matrix& pivoting();
-    void LUDecomposition(Matrix& L, Matrix& U);
-    void LUDecomposition(Matrix& P, Matrix& L, Matrix& U);
     double determinant();
     bool isSingular();
     Matrix& transpose();
@@ -36,6 +33,7 @@ public:
     Vector& operator[](int n);
     const Vector& operator[](int n) const;
 };
+Matrix& operator*(const Matrix& m, const double& factor);
 std::ostream& operator<<(std::ostream& os, const Matrix& M);
 std::ostream& operator<<(std::ostream& os, Matrix& M);
 #endif

@@ -190,3 +190,12 @@ Matrix& Matrix::inverse() {
     Matrix *pnew = new Matrix(inv.transpose());
     return *pnew;
 }
+
+
+Matrix& operator*(const Matrix& m, const double& factor) {
+    Matrix *pnew = new Matrix();
+    for(auto x : m.elem) {
+        pnew->elem.push_back(factor * x);
+    }
+    return *pnew;
+}
